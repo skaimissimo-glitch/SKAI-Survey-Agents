@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Survey Agent Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-shape bg-shape-a" aria-hidden="true"></div>
+  <div class="bg-shape bg-shape-b" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Opportunity Intelligence</p>
+      <h1>Survey Agent Dashboard</h1>
+      <p class="subtitle">Rank the best opportunities per site before you spend your time.</p>
+    </div>
+    <div class="preflight" id="preflightCard">
+      <h2>WireGuard Preflight</h2>
+      <p>Confirm VPN status manually before opening platform links.</p>
+      <label class="switch-row" for="wgCheck">
+        <input type="checkbox" id="wgCheck" />
+        <span>I confirm WireGuard is connected</span>
+      </label>
+      <p class="preflight-status" id="preflightStatus">Status: Not confirmed</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Auto Scout</h2>
+      <p class="subtitle">Agent-driven scan: collect payout/time opportunities and rank them automatically.</p>
+      <div class="prolific-wrap">
+        <button id="runAutoScout">Auto Scan Sites</button>
+        <p id="autoScoutStatus" class="prolific-status">Scout idle</p>
+      </div>
+      <label class="switch-row" for="autoScoutOnLoad">
+        <input type="checkbox" id="autoScoutOnLoad" checked />
+        <span>Run Auto Scout on page load</span>
+      </label>
+      <p class="hint">Only public content can be scanned from this local dashboard. Login-only dashboards must be reviewed manually.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Prolific Quick Launch</h2>
+      <p class="subtitle">Open Prolific only after WireGuard is confirmed, then log in manually.</p>
+      <div class="prolific-wrap">
+        <button id="openProlific" class="open-site" data-url="https://app.prolific.com">Open Prolific</button>
+        <p id="prolificGateStatus" class="prolific-status">Locked: confirm WireGuard first</p>
+      </div>
+      <div class="checklist" aria-live="polite">
+        <h3>Login Manually Checklist</h3>
+        <ol>
+          <li>Turn on WireGuard and confirm the toggle in this dashboard.</li>
+          <li>Click Open Prolific.</li>
+          <li>Sign in manually on Prolific.</li>
+          <li>Return here and pick the top ranked survey for time/money.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="panel" id="manualEntryPanel" hidden>
+      <h2>Add Opportunity</h2>
+      <form id="surveyForm" class="form-grid">
+        <label>
+          Site
+          <select id="site" required></select>
+        </label>
+        <label>
+          Survey Title
+          <input id="title" required placeholder="Product feedback #41" />
+        </label>
+        <label>
+          Reward (USD)
+          <input id="reward" type="number" min="0" step="0.01" required />
+        </label>
+        <label>
+          Minutes
+          <input id="minutes" type="number" min="1" step="1" required />
+        </label>
+        <label>
+          Approval Odds (0-100)
+          <input id="approval" type="number" min="0" max="100" step="1" required />
+        </label>
+        <label>
+          Payout Speed (1-5)
+          <input id="payout" type="number" min="1" max="5" step="1" required />
+        </label>
+        <label>
+          Friction (1-5)
+          <input id="friction" type="number" min="1" max="5" step="1" required />
+        </label>
+        <button type="submit">Add And Rank</button>
+      </form>
+      <p class="hint">Scoring favors high hourly rate and approval odds, then payout speed, and penalizes high friction.</p>
+    </section>
+
+    <section class="panel">
+      <button id="toggleManualEntry" class="secondary">Show Manual Entry (Optional)</button>
+    </section>
+
+    <section class="panel">
+      <h2>Agent Controls</h2>
+      <p class="subtitle">Tune weights and let the agent generate your next-best queue.</p>
+      <form id="weightsForm" class="weights-grid">
+        <label>
+          Rank Mode
+          <select id="rankingMode">
+            <option value="time-money">Time / Money First</option>
+            <option value="balanced">Balanced Score</option>
+          </select>
+        </label>
+        <label>
+          Hourly Weight
+          <input id="weightRate" type="number" min="0" max="2" step="0.05" />
+        </label>
+        <label>
+          Approval Weight
+          <input id="weightApproval" type="number" min="0" max="60" step="1" />
+        </label>
+        <label>
+          Payout Weight
+          <input id="weightPayout" type="number" min="0" max="30" step="1" />
+        </label>
+        <label>
+          Friction Penalty
+          <input id="weightFriction" type="number" min="0" max="20" step="1" />
+        </label>
+        <label>
+          Minimum Score
+          <input id="minimumScore" type="number" min="0" max="200" step="1" />
+        </label>
+        <button type="submit">Save Agent Weights</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Website Name Leaderboard</h2>
+      <p class="subtitle">Every site listed, sorted by best survey for your selected ranking mode.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Website</th>
+              <th>Best Survey</th>
+              <th>Reward</th>
+              <th>Minutes</th>
+              <th>$/hr</th>
+              <th>Score</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="siteRankBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Agent Next-Best Queue</h2>
+      <p class="subtitle">One recommended opportunity per site, sorted by your selected rank mode.</p>
+      <div id="agentQueue" class="queue"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Top Opportunity Per Site</h2>
+      <div id="siteCards" class="cards"></div>
+    </section>
+
+    <section class="panel">
+      <h2>All Ranked Opportunities</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Site</th>
+              <th>Title</th>
+              <th>Reward</th>
+              <th>Minutes</th>
+              <th>$/hr</th>
+              <th>Approval</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="rankedTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
