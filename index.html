@@ -104,6 +104,33 @@
     </section>
 
     <section class="panel">
+      <h2>Website Name Leaderboard</h2>
+      <p class="subtitle">Every site listed, sorted by best survey for your selected ranking mode.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Website</th>
+              <th>Best Survey</th>
+              <th>Reward</th>
+              <th>Minutes</th>
+              <th>$/hr</th>
+              <th>Score</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="siteRankBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Agent Next-Best Queue</h2>
+      <p class="subtitle">One recommended opportunity per site, sorted by your selected rank mode.</p>
+      <div id="agentQueue" class="queue"></div>
+    </section>
+
+    <section class="panel">
       <h2>Agent Controls</h2>
       <p class="subtitle">Tune weights and let the agent generate your next-best queue.</p>
       <form id="weightsForm" class="weights-grid">
@@ -136,33 +163,6 @@
         </label>
         <button type="submit">Save Agent Weights</button>
       </form>
-    </section>
-
-    <section class="panel">
-      <h2>Website Name Leaderboard</h2>
-      <p class="subtitle">Every site listed, sorted by best survey for your selected ranking mode.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Website</th>
-              <th>Best Survey</th>
-              <th>Reward</th>
-              <th>Minutes</th>
-              <th>$/hr</th>
-              <th>Score</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="siteRankBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2>Agent Next-Best Queue</h2>
-      <p class="subtitle">One recommended opportunity per site, sorted by your selected rank mode.</p>
-      <div id="agentQueue" class="queue"></div>
     </section>
 
     <section class="panel">
